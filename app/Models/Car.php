@@ -13,7 +13,7 @@ class Car extends Model
 
     protected $primaryKey = 'id';
 
-    protected $fillable = ['name', 'founded', 'description'];
+    protected $fillable = ['name', 'founded', 'description', 'image_path'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -22,5 +22,34 @@ class Car extends Model
     public function carModels() {
         return $this->hasMany(CarModel::class);
     }
+
+    public function headquarter() {
+        return $this->hasOne(Headquarter::class);
+    }
+
+    public function engines() {
+        return $this->hasManyThrough(
+            Engine::class, 
+            CarModel::class,
+            'car_id', //Foreign key on CarModel table
+            'model_id' //Foreign key on Engine table
+        );
+    }
+
+    //define a has one through relationship
+    public function productionDate() {
+        return $this->hasOneThrough(
+            CarProductionDate::class,
+            CarModel::class,
+            'car_id', //Foreign key on CarModel table
+            'model_id' //Foreign key on CarProductionDate table
+        );
+    }
+
+    public function products() {
+        return $this->belongsToMany(Product::class);
+
+    }
+
 
 }

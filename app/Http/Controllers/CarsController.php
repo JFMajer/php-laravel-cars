@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Car;
+use App\Models\Product;
+use App\Models\Headquarter;
+use App\Http\Requests\CreateValidationRequest;
 
 class CarsController extends Controller
 {
@@ -14,10 +17,10 @@ class CarsController extends Controller
      */
     public function index()
     {
-        $cars = Car::all()->toJson();
-        $cars = json_decode($cars);
+        $cars = Car::paginate(3);
+        
 
-        var_dump($cars);
+        //var_dump($cars);
         
         return view('cars.index', [
             'cars' => $cars
@@ -41,14 +44,33 @@ class CarsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-       //print_r("$request.input");
+    {   
 
-       $car = Car::create([
-           'name' => $request->input('name'),
-           'founded' => $request->input('founded'),
-           'description' => $request->input('description')
-       ]);
+        //Methods we can use on $request
+        // $test = $request->file('image')->guessExtension();
+        // dd($test);
+
+        //dd($request->all());
+        $request->validate([
+            'image' => 'required|mimes:png,jpg,jpeg|max:5048',
+            'name' => 'required|max:255|unique:cars',
+            'description' => 'required|max:255',
+            'founded' => 'required|integer|min:1800|max:2021'
+        ]);
+
+        $newImageName = time().'-'.$request->name.'.'.$request->image->extension();
+
+        $request->image->move(public_path('images'), $newImageName);
+
+        //Check if request is /cars and store in DB
+        if ($request->is('cars')) {
+            $car = Car::create([
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+                'founded' => $request->input('founded'),
+                'image_path' => $newImageName
+            ]);
+        }
 
         // $car = new Car;
         // $car->name = $request->input('name');
@@ -70,8 +92,14 @@ class CarsController extends Controller
         //dd($id);
 
         $car = Car::find($id);
-        dd($car);
+        //$hq = Headquarter::find($id);
+        $products = Product::find($id);
+        print_r($products);
+        //dd($car);
+
         return view('cars.show')->with('car', $car);
+
+
     }
 
     /**

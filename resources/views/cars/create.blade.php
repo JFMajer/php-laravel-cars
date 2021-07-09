@@ -10,9 +10,10 @@
     </div>
 
     <div class="flex justify-center pt-20">
-        <form action="/cars" method="POST">
+        <form action="/cars" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="block">
+                <input type="file" class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400 border-solid border-4 border-light-blue-500" name="image">
                 <input type="text" class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400 border-solid border-4 border-light-blue-500" name="name" placeholder="Brand name...">
                 <input type="text" class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400 border-solid border-4 border-light-blue-500" name="founded" placeholder="founded">
                 <input type="text" class="block shadow-5xl mb-10 p-2 w-80 italic placeholder-gray-400 border-solid border-4 border-light-blue-500" name="description" placeholder="description">
@@ -20,5 +21,15 @@
             </div>
         </form>
     </div>
+    @if ($errors->any()) 
+    <div class="w-4/8 m-auto text-center">
+        <ul class="bg-red-500 list-inline text-sm">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+        
+    @endif
 
 @endsection
