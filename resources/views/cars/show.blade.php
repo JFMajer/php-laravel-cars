@@ -22,6 +22,8 @@
             <p class="text-lg text-gray-700 py-6">
                 {{ $car->description }}
             </p>
+            <p>Car owner:</p>
+            {{ $car->user_id }}
 
             <table class="table-auto">
                 <tr class="bg-blue-100">
